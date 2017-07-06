@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Hello World!</title>
+    <style media="screen">
+      .version {
+        color: red;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Hello World!</h1>
+    We are using Node.js
+    <span id="version-node" class="version"></span>
+    and Electron
+    <span id="version-electron" class="version"></span>
+
+    <div>
+      <input type="text" id="message" name="" value="">
+      <br/>
+      <button type="button" id="button" name="button">click me</button>
+    </div>
+
+    <script type="text/javascript">
+      // 引入 ipcRenderer 模块。
+      var ipcRenderer = require('electron').ipcRenderer;
+      // 引入 remote 模块
+      var remote = require('electron').remote
+      var versionNode = process.version;
+      var versionElectron = process.versions['electron'];
+      document.getElementById('version-node').innerText = versionNode
+      document.getElementById('version-electron').innerText = versionElectron
+
+      document.getElementById('button').onclick = function () {
+        var message = document.getElementById('message').value;
+        // 使用 ipcRenderer.send 向主进程发送消息。
+        ipcRenderer.send('asynchronous-message', message);
+      }
+
+      // 监听主进程返回的消息
+      ipcRenderer.on('asynchronous-reply', function (event, arg) {
+        alert(arg);
+      });
+
+      // 获取主进程中的 BrowserWindow 对象
+      var BrowserWindow = remote.BrowserWindow;
+      // 创建一个渲染进程
+      var win = new BrowserWindow({ width: 350, height: 500 });
+      win.loadURL('http://nodejh.com');
+    </script>
+  </body>
+</html>
